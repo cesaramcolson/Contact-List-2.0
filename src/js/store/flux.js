@@ -7,7 +7,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 			userExists: async () => {
 				try {
-					const response = await fetch(`${store.baseUrl}`, {
+					const response = await fetch(`${getStore().baseUrl}`, {
 						method: "GET",
 						headers: {
 							'Content-Type': 'application/json'
@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			createUser: async () => {
 				try {
-					const response = await fetch(`${store.baseUrl}`, {
+					const response = await fetch(`${getStore().baseUrl}`, {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json"
@@ -46,7 +46,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (!exist) {
 						await actions.createUser();
 					}
-					const response = await fetch(`${store.baseUrl}/contacts`, {
+					const response = await fetch(`${getStore().baseUrl}/contacts`, {
 						method: "GET",
 						headers: {
 							"Content-Type": "application/json"
@@ -58,9 +58,59 @@ const getState = ({ getStore, getActions, setStore }) => {
 					let data = await response.json()
 					console.log(data)
 					setStore({ contacts: data.contacts });
-					return getStore.contacts();
+					return getStore().contacts;
 				} catch(error) {
 					console.error("Error Fetching Contacts: ", error)
+				}
+			},
+			createContact: async (contact) => {
+				try {
+					const response = await fetch(`${getStore().baseUrl}/contacts`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(contact)
+					});
+					if(!response.ok) {
+						throw new Error(`Error Status: ${response.status}`);
+					}
+					await getActions().fetchContacts()
+				} catch(error) {
+					console.error("Error Creating new Contact: ", error);
+				}
+			},
+			deleteContact: async (id) => {
+				try {
+					const response = await fetch(`${getStore().baseUrl}/contacts/${id}`, {
+						method: "DELETE",
+						headers: {
+							"Content-Type": "application/json"
+						}
+					});
+					if (!response.ok) {
+						throw new Error(`Error Status: ${response.status}`)
+					}
+					await getActions().fetchContacts()
+				} catch (error) {
+					console.error("Error Deleting Contact: ", error)
+				}
+			},
+			updateContact: async (id, updatedContact) => {
+				try {
+					const response = await fetch(`${getStore().baseUrl}/contacts/${id}`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(updatedContact)
+					});
+					if(!response.ok) {
+						throw new Error(`Error Status: ${response.status}`)
+					}
+					await getActions().fetchContacts()
+				} catch (error) {
+					console.error("Error Updating Contact: ", error)
 				}
 			}
 		}
