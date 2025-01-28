@@ -1,6 +1,8 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
-export const Contact = () => {
+export const Contact = ({ id, name, email, phone, address, onDeleteClick }) => {
     return (
         <li className="list-group-item">
             <div className="row w-100">
@@ -9,26 +11,35 @@ export const Contact = () => {
                 </div>
                 <div className="col-12 col-sm-6 col-md-9 text-sm-left d-flex justify-content-between">
                     <div className="d-flex flex-column">
-                        <h5 className="mx-4 my-2">name</h5>
+                        <h5 className="mx-4 my-2">{name}</h5>
                         <div className="mb-2">
                             <i className="fas fa-map-marker-alt fa-lg text-muted mr-3"></i>
-                            <span className="text-muted p-2">address</span>
+                            <span className="text-muted p-2">{address}</span>
                         </div>
                         <div className="mb-2">
                             <i className="fas fa-phone text-muted mr-3"></i>
-                            <span className="text-muted small  p-2">phone</span>
+                            <span className="text-muted small  p-2">{phone}</span>
                         </div>
                         <div className="mb-2">
                             <i className="fas fa-envelope text-muted mr-3"></i>
-                            <span className="text-muted small text-truncate  p-2">email</span>
+                            <span className="text-muted small text-truncate  p-2">{email}</span>
                         </div>
                     </div>
                     <div>
-                        <i className="fas fa-pencil-alt mr-3"></i>
-                        <button className="btn"><i className="fas fa-trash-alt"></i></button>
+                        <Link to={`/update/${id}`}><i className="fas fa-pencil-alt mr-3"></i></Link>
+                        <button className="btn" onClick={onDeleteClick}><i className="fas fa-trash-alt"></i></button>
                     </div>
                 </div>
             </div>
         </li>
     )
+};
+
+Contact.propTypes = {
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    address: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    onDeleteClick: PropTypes.func.isRequired,
 };
